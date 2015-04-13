@@ -1,7 +1,5 @@
 package com.mkloeppner.core.commands;
 
-import net.md_5.bungee.api.chat.TextComponent;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,10 +19,12 @@ public class ExtGroupCommand extends ExtBaseCommand {
 
     public void addSubcommand(ExtBaseCommand subCommand) {
         subCommand.setParent(this);
+        subCommand.setDependencyInjectionContainer(this.getDependencyInjectionContainer());
         this.subCommands.put(subCommand.getName(), subCommand);
     }
     public void removeSubcommand(ExtBaseCommand subCommand) {
         subCommand.setParent(null);
+        subCommand.setDependencyInjectionContainer(null);
         this.subCommands.remove(subCommand.getName());
     }
 
@@ -32,7 +32,7 @@ public class ExtGroupCommand extends ExtBaseCommand {
     public void executeCommand() {
 
         if (this.getRawParameters().length < 1) {
-            this.getCommandSender().sendMessage(new TextComponent(this.getGroupCommandFormatter().getSubcommandsList()));
+            this.sendMessage(this.getGroupCommandFormatter().getSubcommandsList());
             return;
         }
 
@@ -42,12 +42,11 @@ public class ExtGroupCommand extends ExtBaseCommand {
         ExtBaseCommand command = this.subcommandForParameter(currentParam);
 
         if (command == null && containsSubcommands()) {
-            this.getCommandSender().sendMessage(new TextComponent("Command not available in command group"));
+            this.sendMessage("Command not available in command group");
         } else if (command != null) {
             command.execute(getCommandSender(), leftParams);
         } else {
-            // TODO: Check during setup. Group commands without subcommands are invalid
-            this.getCommandSender().sendMessage(new TextComponent("Command does not contain subcommands"));
+            this.sendMessage("Command does not contain subcommands");
         }
 
     }
@@ -80,6 +79,14 @@ public class ExtGroupCommand extends ExtBaseCommand {
 
     public ExtGroupCommandFormatter getGroupCommandFormatter() {
         return (ExtGroupCommandFormatter)this.getFormatter();
+    }
+
+    public void setDependencyInjectionContainer(ExtPluginCommand dependencyInjectionContainer) {
+        super.setDependencyInjectionContainer(dependencyInjectionContainer);
+
+        for (ExtBaseCommand command : this.getSubcommands()) {
+            command.setDependencyInjectionContainer(this.getDependencyInjectionContainer());
+        }
     }
 
 }

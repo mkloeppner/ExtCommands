@@ -1,16 +1,20 @@
 package com.mkloeppner.core.commands;
 
+import com.mkloeppner.core.commands.bungee.ExtBungeeCommand;
 import lombok.Getter;
 import lombok.Setter;
-import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.plugin.Command;
-import java.lang.Override;
 import java.lang.String;
 
 /**
  * Created by martinkloeppner on 12/04/15.
  */
-public class ExtBaseCommand extends Command {
+public class ExtBaseCommand {
+
+    @Getter
+    private ExtPluginCommand dependencyInjectionContainer;
+
+    @Getter @Setter
+    private String name;
 
     @Getter @Setter
     private ExtBaseCommandFormatter formatter;
@@ -18,20 +22,19 @@ public class ExtBaseCommand extends Command {
     @Getter @Setter
     private ExtBaseCommand parent;
 
-    @Getter
-    private CommandSender commandSender;
+    @Getter @Setter
+    private ExtCommandSender commandSender;
 
     @Getter
     private String[] rawParameters;
 
     public ExtBaseCommand(String name) {
-        super(name);
+        this.name = name;
         this.parent = null;
         this.formatter = new ExtBaseCommandFormatter(this);
     }
 
-    @Override
-    public void execute(CommandSender commandSender, String[] strings) {
+    public void execute(ExtCommandSender commandSender, String[] strings) {
         this.commandSender = commandSender;
         this.rawParameters = strings;
         this.executeCommand();
@@ -46,5 +49,13 @@ public class ExtBaseCommand extends Command {
 
     public String getCompleteCommand() {
         return this.getFormatter().getCommandPath();
+    }
+
+    public void sendMessage(String message) {
+        this.getCommandSender().sendMessage(this.getDependencyInjectionContainer().createTextComponent(message));
+    }
+
+    public void setDependencyInjectionContainer(ExtPluginCommand dependencyInjectionContainer) {
+        this.dependencyInjectionContainer = dependencyInjectionContainer;
     }
 }

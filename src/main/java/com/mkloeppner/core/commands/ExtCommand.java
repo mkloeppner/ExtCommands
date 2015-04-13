@@ -3,7 +3,6 @@ package com.mkloeppner.core.commands;
 import com.mkloeppner.core.exception.InvalidParameterCountException;
 import lombok.Getter;
 import lombok.Setter;
-import net.md_5.bungee.api.chat.TextComponent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +35,7 @@ public class ExtCommand extends ExtBaseCommand {
             this.readParameters();
             this.performCommand();
         } catch (InvalidParameterCountException ex) {
-            this.getCommandSender().sendMessage(new TextComponent(this.getFormatter().getCommandDescriptionLine()));
+            this.sendMessage(this.getFormatter().getCommandDescriptionLine());
         }
     }
 
@@ -56,6 +55,7 @@ public class ExtCommand extends ExtBaseCommand {
     public void performCommand() {
         this.delegate.executeCommand(this, this.getParameters());
     }
+
 
 
 }
