@@ -8,8 +8,8 @@ import net.md_5.bungee.api.chat.TextComponent;
  */
 public class ExtBungeeCommandTextComponent extends ExtCommandTextComponent<TextComponent> {
 
-    public ExtBungeeCommandTextComponent(TextComponent textComponent) {
-        super(textComponent);
+    public ExtBungeeCommandTextComponent(String message) {
+        super(new TextComponent(message));
     }
 
 }

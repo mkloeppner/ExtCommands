@@ -28,6 +28,6 @@ public class ExtBungeeCommand<T extends ExtBaseCommand> extends Command implemen
 
     @Override
     public ExtCommandTextComponent createTextComponent(String message) {
-        return new ExtBungeeCommandTextComponent(new TextComponent(message));
+        return new ExtBungeeCommandTextComponent(message);
     }
 }

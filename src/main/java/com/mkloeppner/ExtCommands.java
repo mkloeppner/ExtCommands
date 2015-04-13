@@ -31,6 +31,6 @@ public class ExtCommands extends Plugin implements ExtCommandDelegate {
 
     @Override
     public void executeCommand(ExtCommand command, List<ExtCommandParam> parameters) {
-        command.getCommandSender().sendMessage(new ExtBungeeCommandTextComponent(new TextComponent("test")));
+        command.getCommandSender().sendMessage(new ExtBungeeCommandTextComponent("test"));
     }
 }
