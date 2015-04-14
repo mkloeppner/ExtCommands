@@ -20,6 +20,7 @@ public class ExtCommands extends Plugin implements ExtCommandDelegate, ExtComman
         this.commands = new ArrayList<>();
 
         ExtCommand helpCmd = new ExtCommand("help", this);
+        helpCmd.addParameter(new ExtCommandParam("page"));
 
         this.commands.add(helpCmd);
         getProxy().getPluginManager().registerCommand(this, new ExtBungeeCommand(helpCmd));
@@ -27,19 +28,43 @@ public class ExtCommands extends Plugin implements ExtCommandDelegate, ExtComman
 
     @Override
     public void executeCommand(ExtCommand command, List<ExtCommandParam> parameters) {
+        switch (command.getCompleteCommand()) {
+            case "/help":
+                Integer pageSize = 10;
+                if (command.getParameters().size() == 0) {
+                    listCommands(command, 0, pageSize);
+                } else {
+                    Integer page = Integer.parseInt(command.getParameters().get(0).getValue());
+                    listCommands(command, page * pageSize, pageSize);
+                }
+                break;
+        }
+    }
+
+    private void listCommands(ExtCommand command, Integer offset, Integer size) {
+        List<ExtBaseCommand> allCommands = getAllCommands();
+        for (int i = offset; offset < offset + size && i < allCommands.size(); i++) {
+            ExtBaseCommand baseCommand = allCommands.get(i);
+            if (baseCommand instanceof ExtGroupCommand) {
+                ExtGroupCommandFormatter cmdFormatter = ((ExtGroupCommand) baseCommand).getGroupCommandFormatter();
+                command.sendMessage(cmdFormatter.getSubcommandsList());
+            } else {
+                command.sendMessage(command.getFormatter().getCommandDescriptionLine());
+            }
+        }
+    }
+
+    private List<ExtBaseCommand> getAllCommands() {
+        List<ExtBaseCommand> allCommands = new ArrayList<>();
         for (Plugin plugin : getProxy().getPluginManager().getPlugins()) {
             if (plugin instanceof ExtCommandsHelpable) {
                 ExtCommandsHelpable helpable = (ExtCommandsHelpable)plugin;
                 for (ExtBaseCommand baseCommand : helpable.getAvailableCommands()) {
-                    if (baseCommand instanceof ExtGroupCommand) {
-                        ExtGroupCommandFormatter cmdFormatter = ((ExtGroupCommand) baseCommand).getGroupCommandFormatter();
-                        command.sendMessage(cmdFormatter.getSubcommandsList());
-                    } else {
-                        command.sendMessage(command.getFormatter().getCommandDescriptionLine());
-                    }
+                    allCommands.add(baseCommand);
                 }
             }
         }
+        return allCommands;
     }
 
     @Override

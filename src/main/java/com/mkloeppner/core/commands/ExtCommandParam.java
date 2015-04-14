@@ -14,13 +14,21 @@ public class ExtCommandParam {
     @Getter @Setter
     private String value;
 
+    @Getter @Setter
+    private boolean optional;
+
 
     public ExtCommandParam(String name) {
-        this(name, null);
+        this(name, false);
     }
 
-    public ExtCommandParam(String name, String value) {
+    public ExtCommandParam(String name, boolean optional) {
+        this(name, optional, null);
+    }
+
+    public ExtCommandParam(String name, boolean optional, String value) {
         this.name = name;
+        this.optional = optional;
         this.value = value;
     }
 
