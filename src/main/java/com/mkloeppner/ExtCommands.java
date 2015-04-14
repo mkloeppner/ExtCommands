@@ -19,13 +19,10 @@ public class ExtCommands extends Plugin implements ExtCommandDelegate, ExtComman
 
         this.commands = new ArrayList<>();
 
-        ExtGroupCommand clanCmd = new ExtGroupCommand("ext");
+        ExtCommand helpCmd = new ExtCommand("help", this);
 
-        ExtCommand inviteCmd = new ExtCommand("help", this);
-        clanCmd.addSubcommand(inviteCmd);
-
-        this.commands.add(clanCmd);
-        getProxy().getPluginManager().registerCommand(this, new ExtBungeeCommand(clanCmd));
+        this.commands.add(helpCmd);
+        getProxy().getPluginManager().registerCommand(this, new ExtBungeeCommand(helpCmd));
     }
 
     @Override
@@ -36,9 +33,9 @@ public class ExtCommands extends Plugin implements ExtCommandDelegate, ExtComman
                 for (ExtBaseCommand baseCommand : helpable.getAvailableCommands()) {
                     if (baseCommand instanceof ExtGroupCommand) {
                         ExtGroupCommandFormatter cmdFormatter = ((ExtGroupCommand) baseCommand).getGroupCommandFormatter();
-                        command.getCommandSender().sendMessage(new ExtBungeeCommandTextComponent(cmdFormatter.getSubcommandsList()));
+                        command.sendMessage(cmdFormatter.getSubcommandsList());
                     } else {
-                        command.getCommandSender().sendMessage(new ExtBungeeCommandTextComponent(command.getFormatter().getCommandDescriptionLine()));
+                        command.sendMessage(command.getFormatter().getCommandDescriptionLine());
                     }
                 }
             }
