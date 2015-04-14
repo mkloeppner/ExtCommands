@@ -23,9 +23,7 @@ public class ExtCommands extends Plugin implements ExtCommandDelegate {
         inviteCmd.addParameter(new ExtCommandParam("player"));
         clanCmd.addSubcommand(inviteCmd);
 
-        ExtBungeeCommand asBungeeCommand = new ExtBungeeCommand(clanCmd);
-
-        getProxy().getPluginManager().registerCommand(this, asBungeeCommand);
+        getProxy().getPluginManager().registerCommand(this, new ExtBungeeCommand(clanCmd));
 
     }
 
